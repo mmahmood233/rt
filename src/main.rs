@@ -58,16 +58,19 @@ fn main() -> io::Result<()> {
     
     match args.scene {
         1 => {
-            // Scene 1: Single sphere
+            // Scene 1: Bright green sphere, no plane, no shadows, blue background
+            scene.background_color = Vec3::new(0.5, 0.7, 1.0); // Light blue background
+            
             scene.add_object(Box::new(Sphere::new(
                 Vec3::new(0.0, 0.0, -3.0),
-                1.0,
-                Material::red(),
+                1.2,
+                Material::green(),
             )));
             
+            // Bright lighting for maximum brightness
             scene.add_light(Light::white_light(
-                Vec3::new(2.0, 2.0, 0.0),
-                args.brightness,
+                Vec3::new(0.0, 0.0, 1.0), // Light from front to avoid shadows
+                args.brightness * 2.0,     // Extra bright
             ));
             
             camera = Camera::new(
@@ -79,97 +82,110 @@ fn main() -> io::Result<()> {
             );
         }
         2 => {
-            // Scene 2: Plane + cube (dimmer)
-            scene.add_object(Box::new(Plane::horizontal(-2.0, Material::gray())));
+            // Scene 2: Red cube on gray plane with shadows, dimmer than Scene 1
+            scene.background_color = Vec3::new(0.5, 0.7, 1.0); // Same blue background
+            
+            scene.add_object(Box::new(Plane::horizontal(-1.5, Material::gray())));
             scene.add_object(Box::new(Cube::new(
-                Vec3::new(-1.0, -2.0, -4.0), // min corner
-                Vec3::new(1.0, 0.0, -2.0),   // max corner
-                Material::blue(),
+                Vec3::new(-0.5, -1.5, -3.7), // min corner - smaller cube
+                Vec3::new(0.5, -0.5, -2.7),  // max corner - smaller cube
+                Material::red(),
             )));
             
+            // Dimmer lighting with shadows
             scene.add_light(Light::white_light(
-                Vec3::new(2.0, 2.0, 0.0),
-                args.brightness * 0.5, // Dimmer than scene 1
+                Vec3::new(2.0, 3.0, -1.0),
+                args.brightness * 0.6, // Dimmer than scene 1
             ));
             
             camera = Camera::new(
-                Vec3::new(0.0, 0.0, 0.0),
-                Vec3::new(0.0, 0.0, -1.0),
+                Vec3::new(0.0, 0.5, 0.0),
+                Vec3::new(0.0, -0.5, -3.0),
                 Vec3::unit_y(),
                 args.fov,
                 args.width as f64 / args.height as f64,
             );
         }
         3 => {
-            // Scene 3: All primitives (sphere, cube, plane, cylinder)
-            scene.add_object(Box::new(Plane::horizontal(-3.0, Material::white())));
+            // Scene 3: All primitives (green sphere, blue cylinder, red cube) on gray plane
+            scene.background_color = Vec3::new(0.5, 0.7, 1.0); // Same blue background
             
+            scene.add_object(Box::new(Plane::horizontal(-1.5, Material::gray())));
+            
+            // Green sphere (left)
             scene.add_object(Box::new(Sphere::new(
-                Vec3::new(-2.0, -1.0, -4.0),
-                1.0,
-                Material::red(),
-            )));
-            
-            scene.add_object(Box::new(Cube::new(
-                Vec3::new(0.5, -3.0, -4.5),
-                Vec3::new(2.5, -1.0, -2.5),
+                Vec3::new(-2.5, -0.7, -4.0),
+                0.8,
                 Material::green(),
             )));
             
+            // Blue cylinder (center)
             scene.add_object(Box::new(Cylinder::new(
-                Vec3::new(0.0, -2.0, -6.0),
-                0.8,
-                2.0,
+                Vec3::new(0.0, -1.5, -4.5),
+                0.6,
+                1.8,
                 Material::blue(),
             )));
             
+            // Red cube (right)
+            scene.add_object(Box::new(Cube::new(
+                Vec3::new(1.8, -1.5, -3.5),
+                Vec3::new(3.2, -0.1, -2.1),
+                Material::red(),
+            )));
+            
             scene.add_light(Light::white_light(
-                Vec3::new(3.0, 3.0, -1.0),
-                args.brightness,
+                Vec3::new(2.0, 4.0, -1.0),
+                args.brightness * 0.8,
             ));
             
             camera = Camera::new(
-                Vec3::new(0.0, 0.0, 0.0),
-                Vec3::new(0.0, -1.0, -4.0),
+                Vec3::new(0.0, 1.0, 0.0),
+                Vec3::new(0.0, -0.5, -4.0),
                 Vec3::unit_y(),
                 args.fov,
                 args.width as f64 / args.height as f64,
             );
         }
         4 => {
-            // Scene 4: Same as Scene 3 but different camera position/angle
-            scene.add_object(Box::new(Plane::horizontal(-3.0, Material::white())));
+            // Scene 4: Same objects as Scene 3 but from different camera angle
+            scene.background_color = Vec3::new(0.5, 0.7, 1.0); // Same blue background
             
+            scene.add_object(Box::new(Plane::horizontal(-1.5, Material::gray())));
+            
+            // Green sphere (left)
             scene.add_object(Box::new(Sphere::new(
-                Vec3::new(-2.0, -1.0, -4.0),
-                1.0,
-                Material::red(),
-            )));
-            
-            scene.add_object(Box::new(Cube::new(
-                Vec3::new(0.5, -3.0, -4.5),
-                Vec3::new(2.5, -1.0, -2.5),
+                Vec3::new(-2.5, -0.7, -4.0),
+                0.8,
                 Material::green(),
             )));
             
+            // Blue cylinder (center)
             scene.add_object(Box::new(Cylinder::new(
-                Vec3::new(0.0, -2.0, -6.0),
-                0.8,
-                2.0,
+                Vec3::new(0.0, -1.5, -4.5),
+                0.6,
+                1.8,
                 Material::blue(),
             )));
             
+            // Red cube (right)
+            scene.add_object(Box::new(Cube::new(
+                Vec3::new(1.8, -1.5, -3.5),
+                Vec3::new(3.2, -0.1, -2.1),
+                Material::red(),
+            )));
+            
             scene.add_light(Light::white_light(
-                Vec3::new(3.0, 3.0, -1.0),
-                args.brightness,
+                Vec3::new(2.0, 4.0, -1.0),
+                args.brightness * 0.8,
             ));
             
-            // Different camera position and angle for Scene 4
+            // Different camera position - from the side and lower
             camera = Camera::new(
-                Vec3::new(4.0, 2.0, -1.0),  // Different position
-                Vec3::new(0.0, -1.0, -4.0), // Same target
+                Vec3::new(-3.0, 0.2, -2.0),  // Side view, lower angle
+                Vec3::new(0.0, -0.5, -4.0),  // Same target
                 Vec3::unit_y(),
-                args.fov * 0.8, // Slightly different FOV
+                args.fov,
                 args.width as f64 / args.height as f64,
             );
         }

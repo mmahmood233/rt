@@ -48,21 +48,49 @@ impl Renderer {
         }
         
         if let Some(hit) = scene.intersect(ray) {
-            // Simple Lambertian shading for now
+            // Lambertian shading with hard shadows
             let mut color = Vec3::zero();
             
             for light in &scene.lights {
                 let light_dir = (light.position - hit.point).normalize();
+                let light_distance = (light.position - hit.point).length();
                 let light_intensity = hit.normal.dot(&light_dir).max(0.0);
                 
-                // TODO: Add shadow rays
-                let light_contribution = Vec3::new(
-                    hit.material.albedo.x * light.color.x,
-                    hit.material.albedo.y * light.color.y,
-                    hit.material.albedo.z * light.color.z,
-                ) * light.intensity * light_intensity;
-                color = color + light_contribution;
+                // Only add light contribution if surface faces the light
+                if light_intensity > 0.0 {
+                    // Cast shadow ray to check for occlusion
+                    let shadow_ray_origin = hit.point + hit.normal * self.epsilon; // Bias to avoid self-intersection
+                    let shadow_ray = Ray::new(shadow_ray_origin, light_dir);
+                    
+                    let mut in_shadow = false;
+                    
+                    // Check if shadow ray hits any object before reaching the light
+                    if let Some(shadow_hit) = scene.intersect(&shadow_ray) {
+                        // If we hit something closer than the light, we're in shadow
+                        if shadow_hit.t < light_distance - self.epsilon {
+                            in_shadow = true;
+                        }
+                    }
+                    
+                    // Only add light contribution if not in shadow
+                    if !in_shadow {
+                        let light_contribution = Vec3::new(
+                            hit.material.albedo.x * light.color.x,
+                            hit.material.albedo.y * light.color.y,
+                            hit.material.albedo.z * light.color.z,
+                        ) * light.intensity * light_intensity;
+                        color = color + light_contribution;
+                    }
+                }
             }
+            
+            // Add small ambient light to prevent completely black shadows
+            let ambient = Vec3::new(
+                hit.material.albedo.x * 0.1,
+                hit.material.albedo.y * 0.1,
+                hit.material.albedo.z * 0.1,
+            );
+            color = color + ambient;
             
             color
         } else {
