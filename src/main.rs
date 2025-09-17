@@ -129,8 +129,8 @@ fn main() -> io::Result<()> {
             
             // Red cube (right)
             scene.add_object(Box::new(Cube::new(
-                Vec3::new(1.8, -1.5, -3.5),
-                Vec3::new(3.2, -0.1, -2.1),
+                Vec3::new(1.8, -1.5, -3.7),
+                Vec3::new(2.8, -0.5, -2.7),
                 Material::red(),
             )));
             
@@ -140,10 +140,10 @@ fn main() -> io::Result<()> {
             ));
             
             camera = Camera::new(
-                Vec3::new(0.0, 1.0, 0.0),
+                Vec3::new(0.0, 1.5, 1.0),  // Move camera back and up
                 Vec3::new(0.0, -0.5, -4.0),
                 Vec3::unit_y(),
-                args.fov,
+                args.fov.max(60.0),  // Ensure minimum 60° FOV for wider view
                 args.width as f64 / args.height as f64,
             );
         }
@@ -170,8 +170,8 @@ fn main() -> io::Result<()> {
             
             // Red cube (right)
             scene.add_object(Box::new(Cube::new(
-                Vec3::new(1.8, -1.5, -3.5),
-                Vec3::new(3.2, -0.1, -2.1),
+                Vec3::new(1.8, -1.5, -3.7),
+                Vec3::new(2.8, -0.5, -2.7),
                 Material::red(),
             )));
             
@@ -182,10 +182,10 @@ fn main() -> io::Result<()> {
             
             // Different camera position - from the side and lower
             camera = Camera::new(
-                Vec3::new(-3.0, 0.2, -2.0),  // Side view, lower angle
+                Vec3::new(-4.0, 0.5, -1.0),  // Further back side view for full visibility
                 Vec3::new(0.0, -0.5, -4.0),  // Same target
                 Vec3::unit_y(),
-                args.fov,
+                args.fov.max(65.0),  // Wider FOV for side view
                 args.width as f64 / args.height as f64,
             );
         }
