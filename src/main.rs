@@ -123,7 +123,7 @@ fn main() -> io::Result<()> {
             scene.add_object(Box::new(Cylinder::new(
                 Vec3::new(0.0, -1.5, -4.5),
                 0.6,
-                1.8,
+                2.5,  // Increased height from 1.8 to 2.5
                 Material::blue(),
             )));
             
@@ -164,7 +164,7 @@ fn main() -> io::Result<()> {
             scene.add_object(Box::new(Cylinder::new(
                 Vec3::new(0.0, -1.5, -4.5),
                 0.6,
-                1.8,
+                2.5,  // Increased height from 1.8 to 2.5
                 Material::blue(),
             )));
             
